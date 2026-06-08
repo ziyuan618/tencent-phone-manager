@@ -1,19 +1,9 @@
 #!/bin/bash
 set -e
-echo "=== 腾讯手机管家 v4.0 Build ==="
+echo "=== 腾讯手机管家 xcodebuild ==="
 
-APP="腾讯手机管家"
-OUTPUT="output"
-APP_DIR="$OUTPUT/Payload/$APP.app"
-mkdir -p "$APP_DIR"
-
-SDK=$(xcrun --sdk iphoneos --show-sdk-path)
-FW="$SDK/System/Library/Frameworks"
-SWIFT_LIB=$(xcrun --sdk iphoneos --show-sdk-platform-path)/Developer/usr/lib
-echo "SDK: $SDK"
-
-# Swift source
-cat > Sources/main.swift << 'EOF'
+# Create source
+cat > main.swift << 'SWIFT'
 import UIKit
 @main class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
@@ -32,37 +22,10 @@ import UIKit
         return true
     }
 }
-EOF
+SWIFT
 
-# Step 1: Compile to .o
-echo "[1/3] Compiling Swift..."
-xcrun swiftc -c \
-  -sdk "$SDK" \
-  -target arm64-apple-ios14.0 \
-  -F "$FW" \
-  -O \
-  Sources/main.swift \
-  -o main.o \
-  2>&1
-
-# Step 2: Link
-echo "[2/3] Linking..."
-xcrun clang -arch arm64 \
-  -isysroot "$SDK" \
-  -mios-version-min=14.0 \
-  -F "$FW" \
-  -L "$SWIFT_LIB" \
-  -Xlinker -rpath -Xlinker @executable_path/Frameworks \
-  -Xlinker -rpath -Xlinker /usr/lib/swift \
-  -Xlinker -add_empty_section -Xlinker __TEXT -Xlinker __swift5_types \
-  main.o \
-  -o "$APP_DIR/$APP" \
-  -framework UIKit -framework Foundation -framework CoreGraphics \
-  -lSystem \
-  2>&1
-
-echo "[3/3] Packaging..."
-cp Info.plist "$APP_DIR/" 2>/dev/null || cat > "$APP_DIR/Info.plist" << 'PLIST'
+# Create Info.plist
+cat > Info.plist << 'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
@@ -77,11 +40,34 @@ cp Info.plist "$APP_DIR/" 2>/dev/null || cat > "$APP_DIR/Info.plist" << 'PLIST'
 <key>UIDeviceFamily</key><array><integer>1</integer><integer>2</integer></array>
 </dict></plist>
 PLIST
-echo "APPL????" > "$APP_DIR/PkgInfo"
 
-codesign -s - "$APP_DIR/$APP" 2>/dev/null || true
-cd "$OUTPUT" && zip -r "../$APP.ipa" Payload/ && cd ..
+echo "Building..."
+xcodebuild \
+  -project TencentManager.xcodeproj \
+  -scheme "腾讯手机管家" \
+  -sdk iphoneos \
+  -configuration Release \
+  -derivedDataPath build \
+  -archivePath build/App.xcarchive \
+  -destination 'generic/platform=iOS' \
+  CODE_SIGNING_ALLOWED=NO \
+  CODE_SIGNING_REQUIRED=NO \
+  ONLY_ACTIVE_ARCH=NO \
+  archive \
+  2>&1 | tail -30
 
-ls -lh "$APP.ipa"
-file "$APP_DIR/$APP"
-echo "DONE"
+# Copy app from archive
+APP=$(find build -name "腾讯手机管家.app" -type d | head -1)
+if [ -z "$APP" ]; then
+    echo "ERROR: No .app found in build output"
+    find build -name "*.app" -type d 2>/dev/null
+    exit 1
+fi
+
+echo "Found app: $APP"
+mkdir -p output/Payload
+cp -r "$APP" output/Payload/
+cd output && zip -r "../腾讯手机管家.ipa" Payload/ && cd ..
+
+ls -lh 腾讯手机管家.ipa
+echo "BUILD SUCCESS"

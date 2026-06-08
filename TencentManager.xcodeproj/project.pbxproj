@@ -1,0 +1,189 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7CA189185A8D4F5CA5DF183C = {isa = PBXBuildFile; fileRef = 31A221956CCC4B94A08BD192; };
+		8BC5B4F47D724C58898B7626 = {isa = PBXBuildFile; fileRef = 65B33B5EE7744B32B362C278; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		31A221956CCC4B94A08BD192 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = SOURCE_ROOT; };
+		65B33B5EE7744B32B362C278 = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
+		463B585F7D5241E0874870B3 = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "腾讯手机管家.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4C6CEDEC84CF49308281BC00 = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1618E2E9DEC448369E7FE3EB = {
+			isa = PBXGroup;
+			children = (
+				31A221956CCC4B94A08BD192,
+				65B33B5EE7744B32B362C278,
+			);
+			sourceTree = "<group>";
+		};
+		911FEA3DF09A448081398C8D = {
+			isa = PBXGroup;
+			children = (
+				463B585F7D5241E0874870B3,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4B81FAD7756549DD9F7060AF = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7F3704E539154F60A9EE190F;
+			buildPhases = (
+				82E00A056AB440A69B8C7F71,
+				4C6CEDEC84CF49308281BC00,
+				F07A3601F03A41469EB8BCE7,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "腾讯手机管家";
+			productName = "腾讯手机管家";
+			productReference = 463B585F7D5241E0874870B3;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8C2905BFC8BA47BDA3F7AA54 = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1540;
+			};
+			buildConfigurationList = A9B2B98F74B246FD9E93E1A2;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				"zh-Hans",
+			);
+			mainGroup = 1618E2E9DEC448369E7FE3EB;
+			productRefGroup = 911FEA3DF09A448081398C8D;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4B81FAD7756549DD9F7060AF,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F07A3601F03A41469EB8BCE7 = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8BC5B4F47D724C58898B7626,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		82E00A056AB440A69B8C7F71 = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7CA189185A8D4F5CA5DF183C,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		656D661B3C3149A3BA1045CE = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tencent.phonemanager;
+				PRODUCT_NAME = "腾讯手机管家";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = arm64;
+			};
+			name = Debug;
+		};
+		C10A9BC9405C4B789E7E4426 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.tencent.phonemanager;
+				PRODUCT_NAME = "腾讯手机管家";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = arm64;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7F3704E539154F60A9EE190F = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				656D661B3C3149A3BA1045CE,
+				C10A9BC9405C4B789E7E4426,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A9B2B98F74B246FD9E93E1A2 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				656D661B3C3149A3BA1045CE,
+				C10A9BC9405C4B789E7E4426,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8C2905BFC8BA47BDA3F7AA54;
+}
