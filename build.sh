@@ -32,7 +32,6 @@ xcrun swiftc \
   -framework Foundation \
   -framework CoreGraphics \
   -framework QuartzCore \
-  -import-objc-header Sources/Bridging.h \
   -o "$APP/$APP_NAME" \
   $SWIFT_SOURCES
 
