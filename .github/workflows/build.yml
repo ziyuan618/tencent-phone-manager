@@ -1,0 +1,22 @@
+# 腾讯手机管家 - 自动构建
+name: Build IPA
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build IPA
+        run: bash build.sh
+      
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: 腾讯手机管家
+          path: output/*.ipa
