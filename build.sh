@@ -1,66 +1,82 @@
 #!/bin/bash
 set -e
-echo "=== 腾讯手机管家 Build ==="
+echo "=== 腾讯手机管家 CI Build ==="
 
 APP="腾讯手机管家"
-BUNDLE="com.tencent.phonemanager"
 OUTPUT="output"
 APP_DIR="$OUTPUT/Payload/$APP.app"
 mkdir -p "$APP_DIR"
 
-# 1. Metal shaders
-echo "[1/3] Metal..."
-xcrun -sdk iphoneos metal -c Shaders/shaders.metal -o "$APP_DIR/default.metallib" 2>/dev/null || echo "  (Metal skipped, no shaders needed for shell)"
-
-# 2. Create Xcode project on-the-fly
-echo "[2/3] Creating project..."
-cat > build_app.swift << 'EOF'
-import Foundation
-import ProjectBuilder
-// We'll use a different approach - direct xcodebuild with a generated project
-EOF
-
-# Use a pre-made xcconfig approach instead
+# Find SDK
 SDK=$(xcrun --sdk iphoneos --show-sdk-path)
-FW="$SDK/System/Library/Frameworks"
+SWIFT_LIB=$(xcrun --sdk iphoneos --show-sdk-platform-path)/Developer/usr/lib
+echo "SDK: $SDK"
 
-# Write the Swift source
-cat > "$APP_DIR/main.swift" << 'SWIFT'
+# Create minimal Swift source
+cat > main.swift << 'EOF'
 import UIKit
-@main
-class AppDelegate: UIResponder, UIApplicationDelegate {
+@main class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     func application(_ app: UIApplication, didFinishLaunchingWithOptions opts: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = UIViewController()
-        window?.backgroundColor = UIColor(red:0.04, green:0.04, blue:0.10, alpha:1)
+        let vc = UIViewController()
+        vc.view.backgroundColor = UIColor(red:0.04,green:0.04,blue:0.10,alpha:1)
         let l = UILabel(frame: CGRect(x:0,y:200,width:UIScreen.main.bounds.width,height:100))
         l.text = "腾讯手机管家 PRO"
         l.textColor = UIColor(red:0,green:0.94,blue:1,alpha:1)
         l.font = UIFont.boldSystemFont(ofSize:24)
         l.textAlignment = .center
-        window?.makeKeyAndVisible()
+        vc.view.addSubview(l)
+        window!.rootViewController = vc
+        window!.makeKeyAndVisible()
         return true
     }
 }
-SWIFT
+EOF
 
-# Compile with xcrun (proper SDK setup)
-xcrun swiftc \
+# Compile as iOS executable
+echo "Compiling..."
+swiftc \
   -sdk "$SDK" \
   -target arm64-apple-ios14.0 \
-  -F "$FW" \
+  -F "$SDK/System/Library/Frameworks" \
+  -L "$SWIFT_LIB" \
+  -lswiftUIKit \
+  -framework UIKit \
+  -framework Foundation \
+  -framework CoreGraphics \
   -Xlinker -rpath -Xlinker @executable_path/Frameworks \
-  -framework UIKit -framework Foundation -framework CoreGraphics \
+  -Xlinker -rpath -Xlinker /usr/lib/swift \
   -o "$APP_DIR/$APP" \
-  "$APP_DIR/main.swift" \
+  main.swift \
   2>&1
 
-echo "[3/3] Packaging..."
-cp Info.plist "$APP_DIR/"
+echo "Packaging..."
+cp Info.plist "$APP_DIR/" 2>/dev/null || cat > "$APP_DIR/Info.plist" << 'PLIST'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+<key>CFBundleExecutable</key><string>腾讯手机管家</string>
+<key>CFBundleIdentifier</key><string>com.tencent.phonemanager</string>
+<key>CFBundleName</key><string>腾讯手机管家</string>
+<key>CFBundleDisplayName</key><string>腾讯手机管家</string>
+<key>CFBundlePackageType</key><string>APPL</string>
+<key>CFBundleShortVersionString</key><string>1.0</string>
+<key>LSRequiresIPhoneOS</key><true/>
+<key>MinimumOSVersion</key><string>14.0</string>
+<key>UIDeviceFamily</key><array><integer>1</integer></array>
+</dict></plist>
+PLIST
+
 echo "APPL????" > "$APP_DIR/PkgInfo"
+
+# Fake sign (TrollStore will handle real signing)
 codesign -s - "$APP_DIR/$APP" 2>/dev/null || true
 
-cd "$OUTPUT" && zip -r "../$APP.ipa" Payload/ && cd ..
-echo "DONE: $APP.ipa"
+# Package
+cd "$OUTPUT"
+zip -r "../$APP.ipa" Payload/
+cd ..
+
 ls -lh "$APP.ipa"
+echo "BUILD SUCCESS"
