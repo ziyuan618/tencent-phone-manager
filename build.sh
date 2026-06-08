@@ -2,7 +2,6 @@
 set -e
 echo "=== 腾讯手机管家 xcodebuild ==="
 
-# Create source
 cat > main.swift << 'SWIFT'
 import UIKit
 @main class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -24,7 +23,6 @@ import UIKit
 }
 SWIFT
 
-# Create Info.plist
 cat > Info.plist << 'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -41,6 +39,7 @@ cat > Info.plist << 'PLIST'
 </dict></plist>
 PLIST
 
+# Build without archive
 echo "Building..."
 xcodebuild \
   -project TencentManager.xcodeproj \
@@ -48,26 +47,34 @@ xcodebuild \
   -sdk iphoneos \
   -configuration Release \
   -derivedDataPath build \
-  -archivePath build/App.xcarchive \
-  -destination 'generic/platform=iOS' \
   CODE_SIGNING_ALLOWED=NO \
   CODE_SIGNING_REQUIRED=NO \
-  ONLY_ACTIVE_ARCH=NO \
-  archive \
-  2>&1 | tail -30
+  CODE_SIGN_IDENTITY="" \
+  build \
+  2>&1 | tail -40
 
-# Copy app from archive
-APP=$(find build -name "腾讯手机管家.app" -type d | head -1)
+# Find the .app
+APP=$(find build -name "腾讯手机管家.app" -type d 2>/dev/null | head -1)
 if [ -z "$APP" ]; then
-    echo "ERROR: No .app found in build output"
+    echo "Looking for any .app..."
     find build -name "*.app" -type d 2>/dev/null
+    APP=$(find build -name "*.app" -type d 2>/dev/null | head -1)
+fi
+
+if [ -z "$APP" ]; then
+    echo "FAILED: No .app produced"
+    echo "Build directory:"
+    ls -la build/ 2>/dev/null
+    find build -type f 2>/dev/null | head -20
     exit 1
 fi
 
-echo "Found app: $APP"
+echo "App: $APP"
+file "$APP/腾讯手机管家" 2>/dev/null || file "$APP"/* 
+
+# Package
 mkdir -p output/Payload
 cp -r "$APP" output/Payload/
 cd output && zip -r "../腾讯手机管家.ipa" Payload/ && cd ..
-
 ls -lh 腾讯手机管家.ipa
-echo "BUILD SUCCESS"
+echo "SUCCESS"
