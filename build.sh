@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-echo "=== 腾讯手机管家 Build ==="
+echo "=== Build ==="
 
 cat > main.swift << 'SWIFT'
 import UIKit
@@ -27,7 +27,7 @@ cat > Info.plist << 'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
-<key>CFBundleExecutable</key><string>腾讯手机管家</string>
+<key>CFBundleExecutable</key><string>Tencent</string>
 <key>CFBundleIdentifier</key><string>com.tencent.phonemanager</string>
 <key>CFBundleName</key><string>腾讯手机管家</string>
 <key>CFBundleDisplayName</key><string>腾讯手机管家</string>
@@ -39,31 +39,27 @@ cat > Info.plist << 'PLIST'
 </dict></plist>
 PLIST
 
-# Build with -target instead of -scheme (no xcscheme needed!)
 echo "Building..."
 xcodebuild \
   -project TencentManager.xcodeproj \
-  -target "腾讯手机管家" \
+  -target Tencent \
   -sdk iphoneos \
   -configuration Release \
   -derivedDataPath build \
   CODE_SIGNING_ALLOWED=NO \
   CODE_SIGNING_REQUIRED=NO \
   CODE_SIGN_IDENTITY="" \
-  build \
-  2>&1 | tail -40
+  build 2>&1 | tail -20
 
-APP=$(find build -name "腾讯手机管家.app" -type d 2>/dev/null | head -1)
-if [ -z "$APP" ]; then
-    APP=$(find build -name "*.app" -type d 2>/dev/null | head -1)
-fi
-if [ -z "$APP" ]; then
-    echo "FAILED"; find build -type f 2>/dev/null | head -20
-    exit 1
-fi
+APP=$(find build -name "Tencent.app" -type d 2>/dev/null | head -1)
+if [ -z "$APP" ]; then APP=$(find build -name "*.app" -type d 2>/dev/null | head -1); fi
+if [ -z "$APP" ]; then echo "FAILED"; exit 1; fi
+
 echo "App: $APP"
 mkdir -p output/Payload
 cp -r "$APP" output/Payload/
+# Rename to 腾讯手机管家.app
+mv "output/Payload/Tencent.app" "output/Payload/腾讯手机管家.app"
 cd output && zip -r "../腾讯手机管家.ipa" Payload/ && cd ..
 ls -lh 腾讯手机管家.ipa
 echo "SUCCESS"
