@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-echo "=== 腾讯手机管家 xcodebuild ==="
+echo "=== 腾讯手机管家 Build ==="
 
 cat > main.swift << 'SWIFT'
 import UIKit
@@ -39,11 +39,11 @@ cat > Info.plist << 'PLIST'
 </dict></plist>
 PLIST
 
-# Build without archive
+# Build with -target instead of -scheme (no xcscheme needed!)
 echo "Building..."
 xcodebuild \
   -project TencentManager.xcodeproj \
-  -scheme "腾讯手机管家" \
+  -target "腾讯手机管家" \
   -sdk iphoneos \
   -configuration Release \
   -derivedDataPath build \
@@ -53,26 +53,15 @@ xcodebuild \
   build \
   2>&1 | tail -40
 
-# Find the .app
 APP=$(find build -name "腾讯手机管家.app" -type d 2>/dev/null | head -1)
 if [ -z "$APP" ]; then
-    echo "Looking for any .app..."
-    find build -name "*.app" -type d 2>/dev/null
     APP=$(find build -name "*.app" -type d 2>/dev/null | head -1)
 fi
-
 if [ -z "$APP" ]; then
-    echo "FAILED: No .app produced"
-    echo "Build directory:"
-    ls -la build/ 2>/dev/null
-    find build -type f 2>/dev/null | head -20
+    echo "FAILED"; find build -type f 2>/dev/null | head -20
     exit 1
 fi
-
 echo "App: $APP"
-file "$APP/腾讯手机管家" 2>/dev/null || file "$APP"/* 
-
-# Package
 mkdir -p output/Payload
 cp -r "$APP" output/Payload/
 cd output && zip -r "../腾讯手机管家.ipa" Payload/ && cd ..
