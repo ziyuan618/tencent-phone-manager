@@ -19,9 +19,11 @@ xcrun -sdk iphoneos metal -c $METAL_SOURCES -o "$APP/default.metallib"
 
 # 2. Compile Swift sources → binary
 echo "[2/4] Compiling Swift..."
-swiftc \
+FWPATH="$SDK/System/Library/Frameworks"
+xcrun swiftc \
   -sdk "$SDK" \
   -target "$TARGET" \
+  -F "$FWPATH" \
   -O -whole-module-optimization \
   -framework UIKit \
   -framework Metal \
@@ -30,6 +32,7 @@ swiftc \
   -framework Foundation \
   -framework CoreGraphics \
   -framework QuartzCore \
+  -import-objc-header Sources/Bridging.h \
   -o "$APP/$APP_NAME" \
   $SWIFT_SOURCES
 
