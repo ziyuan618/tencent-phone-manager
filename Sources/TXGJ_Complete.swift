@@ -254,7 +254,7 @@ class MainViewController: UIViewController {
     
     private func createCard(icon: String, title: String, desc: String, index: Int) -> UIView {
         let cardW = view.bounds.width - 40
-        let card = UIView(frame: CGRect(x: 20, y: 220 + index * 90, width: cardW, height: 75))
+        let card = UIView(frame: CGRect(x: 20, y: CGFloat(220 + index * 90), width: cardW, height: 75))
         card.backgroundColor = UIColor(red: 0.08, green: 0.08, blue: 0.18, alpha: 0.95)
         card.layer.cornerRadius = 12
         card.layer.borderWidth = 0.5
