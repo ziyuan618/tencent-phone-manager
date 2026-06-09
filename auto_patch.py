@@ -65,13 +65,6 @@ hrv=s.find(b'_OBJC_CLASS_$_HUDRootViewController')
 print(f'_OBJC_CLASS_$_LoginViewController at 0x{lgn:x}')
 print(f'_OBJC_CLASS_$_HUDRootViewController at 0x{hrv:x}')
 
-# Actually, let me try renaming in the symbol table
-if lgn>0:
-    # The symbol entry points to the class structure
-    # If I rename it, objc_getClass("LoginViewController") returns nil
-    # But the caller still uses the string "LoginViewController"
-    # This doesn't help unless I change the CALLER's string too
-
 # TRUE SOLUTION: Replace ALL LoginViewController strings in the binary
 # In __cstring, __objc_classname, symbol table, everywhere
 count=0
